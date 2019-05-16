@@ -1,24 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
+
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
+
+import TodosContextProvider from './TodosContextProvider/TodosConsumerProvider'
+import { TodosContextConsumer } from './TodosContextProvider/TodosContext';
+
 import './App.css';
+
+const client = new ApolloClient({
+  uri: 'https://api.graph.cool/simple/v1/cjfitlb222zju01860wc988f6'
+});
+
+const TodosConsumer: React.FC = () => {
+  return (
+    <TodosContextConsumer>
+      { ({ todos, activeTodo }) => {
+        console.log({ todos, activeTodo })
+        return <span>Algun todo</span>
+      }}
+    </TodosContextConsumer>
+  )
+}
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ApolloProvider
+        client={client}
+      >
+        <TodosContextProvider>
+          <h3>Todos</h3>
+          <TodosConsumer />
+        </TodosContextProvider>
+      </ApolloProvider>
     </div>
   );
 }
