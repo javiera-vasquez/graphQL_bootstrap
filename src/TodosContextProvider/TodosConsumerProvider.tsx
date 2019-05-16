@@ -3,12 +3,20 @@ import { adopt } from 'react-adopt'
 
 import { ALL_TODOS } from './Query';
 import { UPDATE_TODO, DELETE_TODO, CREATE_TODO } from './Mutation';
-import { MutationFactory, QueryFactory } from '../helpers/ApolloFactory'
+import { MutationFactory, ApolloConsumerFactory } from '../helpers/ApolloFactory'
 import { createTodoCache, updateTodoCache, deleteTodosCache } from './cache'
 import { TodosContextProvider } from './TodosContext';
+import { ApolloMutationResult } from '../interfaces/Apollo';
 
-export const TodosContainer = adopt({
-  todos: QueryFactory({ query: ALL_TODOS }),
+interface adoptMapProvider {
+  apolloClient: any;
+  createTodo: ApolloMutationResult;
+  updateTodo: ApolloMutationResult;
+  deleteTodo: ApolloMutationResult;
+}
+
+const TodosContainer = adopt({
+  apolloClient: ApolloConsumerFactory(),
   createTodo: MutationFactory(CREATE_TODO, createTodoCache),
   updateTodo: MutationFactory(UPDATE_TODO, updateTodoCache),
   deleteTodo: MutationFactory(DELETE_TODO, deleteTodosCache)
@@ -20,11 +28,13 @@ export const TodosContextResolver = ({...props}) => {
 
   return (
     <TodosContainer>
-      {({ todos, createTodo, updateTodo, deleteTodo }: any) => {
+      {({ apolloClient, createTodo, updateTodo, deleteTodo }: adoptMapProvider) => {
 
         const handleComplete = async (id: string, completed: boolean) => {
           setMutationStatus(true)
-          await updateTodo.mutation({ variables: { id, completed: !completed } })
+          await updateTodo.mutation({
+            variables: { id, completed: !completed }
+          })
           setMutationStatus(false)
         }
 
@@ -42,7 +52,7 @@ export const TodosContextResolver = ({...props}) => {
 
         return (
           <TodosContextProvider value={{
-            todos,
+            getTodos: apolloClient.query({query: ALL_TODOS}),
             activeTodo,
             isLoading: mutationStatus,
             setActiveTodo: (id: string) => setActiveTodo(id),

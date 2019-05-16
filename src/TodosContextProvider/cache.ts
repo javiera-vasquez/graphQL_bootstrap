@@ -4,7 +4,7 @@ import { DataProxy } from 'apollo-cache';
 import { FetchResult } from 'apollo-link';
 
 import { ALL_TODOS } from './Query';
-import { Todo } from './TodosContext';
+// import { Todo } from './TodosContext';
 
 export const createTodoCache = (cache: DataProxy, { data: { createTodo } }: FetchResult ) => {
   const query = ALL_TODOS;

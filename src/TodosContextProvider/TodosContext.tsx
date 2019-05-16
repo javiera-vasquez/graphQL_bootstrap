@@ -1,5 +1,5 @@
 import React from 'react';
-import { Query, Mutation } from 'react-apollo';
+import { ApolloQueryResult, ApolloMutationResult } from '../interfaces/Apollo';
 
 export interface Todo {
   id: string;
@@ -8,14 +8,14 @@ export interface Todo {
 }
 
 export interface TodosContextInterface {
-  todos: Query;
+  getTodos: ApolloQueryResult;
   isLoading: boolean;
   activeTodo: string | undefined;
   setActiveTodo: (id: string) => void;
   createTodo: (title: string) => void;
   updateTodo: (id: string, completed: boolean) => void;
   deleteTodo: (id: string) => void;
-  mutationWrappers: { [key: string]: Mutation };
+  mutationWrappers: { [key: string]: ApolloMutationResult };
 }
 
 const context = React.createContext<TodosContextInterface>(null as any);
