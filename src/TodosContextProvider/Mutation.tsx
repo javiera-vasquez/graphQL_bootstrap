@@ -1,5 +1,5 @@
 import { gql } from 'apollo-boost'
-import { TODO_FRAGMENT } from '../Fragment/commonFragments';
+import { TODO_FRAGMENT } from '../fragments/commonFragments';
 
 export const CREATE_TODO = gql`
   mutation createTodo($title: String!) {

@@ -1,7 +1,18 @@
 import React from 'react';
-import { GraphQLRequest, FetchPolicy, ApolloError, FetchResult } from 'apollo-boost'
-import { Mutation, Query, MutationResult,  MutationFn, QueryResult } from 'react-apollo'
 import { DataProxy } from 'apollo-cache';
+import {
+  GraphQLRequest,
+  FetchPolicy,
+  ApolloError,
+  FetchResult
+} from 'apollo-boost'
+import {
+  Mutation,
+  Query,
+  MutationResult,
+  MutationFn,
+  QueryResult
+} from 'react-apollo'
 
 export const MutationFactory = (
   query: GraphQLRequest,
