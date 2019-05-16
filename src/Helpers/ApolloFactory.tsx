@@ -37,6 +37,7 @@ export interface QueryFactoryInterface {
   variables?: { [key: string]: any };
   pollInterval?: number;
   fetchPolicy?: FetchPolicy;
+  partialRefetch?: boolean;
   onError?: (error: ApolloError) => void;
   onCompleted?: (data: any) => void;
 }
@@ -46,6 +47,7 @@ export const QueryFactory = ({
   variables = {},
   pollInterval = 0,
   fetchPolicy = 'cache-first',
+  partialRefetch = false,
   onError,
   onCompleted,
 }: QueryFactoryInterface) => {
@@ -55,6 +57,7 @@ export const QueryFactory = ({
       variables={variables}
       pollInterval={pollInterval}
       fetchPolicy={fetchPolicy}
+      partialRefetch={partialRefetch}
       onError={onError}
       onCompleted={onCompleted}
     >
