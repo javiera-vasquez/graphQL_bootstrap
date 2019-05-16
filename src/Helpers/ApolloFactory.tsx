@@ -4,14 +4,15 @@ import {
   GraphQLRequest,
   FetchPolicy,
   ApolloError,
-  FetchResult
+  FetchResult,
 } from 'apollo-boost'
 import {
   Mutation,
   Query,
   MutationResult,
   MutationFn,
-  QueryResult
+  QueryResult,
+  ApolloConsumer
 } from 'react-apollo'
 
 export const MutationFactory = (
@@ -38,6 +39,7 @@ export interface QueryFactoryInterface {
   pollInterval?: number;
   fetchPolicy?: FetchPolicy;
   partialRefetch?: boolean;
+  skip?: boolean;
   onError?: (error: ApolloError) => void;
   onCompleted?: (data: any) => void;
 }
@@ -48,6 +50,7 @@ export const QueryFactory = ({
   pollInterval = 0,
   fetchPolicy = 'cache-first',
   partialRefetch = false,
+  skip = false,
   onError,
   onCompleted,
 }: QueryFactoryInterface) => {
@@ -60,8 +63,18 @@ export const QueryFactory = ({
       partialRefetch={partialRefetch}
       onError={onError}
       onCompleted={onCompleted}
+      displayName={`${query}`}
+      skip={skip}
     >
-      { (result: QueryResult) => render({ result }) }
+      { (result: QueryResult) => render(result) }
     </Query>
+  )
+}
+
+export const ApolloConsumerFactory = () => {
+  return ({ render }: any) => (
+    <ApolloConsumer>
+      { ({ query, mutate, cache }) => render({ query, mutate, cache }) }
+    </ApolloConsumer>
   )
 }
