@@ -1,21 +1,11 @@
 import React from 'react';
-import { gql, GraphQLRequest, FetchPolicy, ApolloError } from 'apollo-boost'
-import { Mutation, Query, MutationResult, QueryResult, MutationFn } from 'react-apollo'
-import { TODO_FRAGMENT } from '../Fragment/commonFragments';
-
-export interface QueryFactoryInterface {
-  query: GraphQLRequest;
-  variables?: { [key: string]: any };
-  pollInterval?: number;
-  children?: React.ReactNode;
-  fetchPolicy?: FetchPolicy;
-  onError?: (error: ApolloError) => void;
-  onCompleted?: () => void;
-}
+import { GraphQLRequest, FetchPolicy, ApolloError, FetchResult } from 'apollo-boost'
+import { Mutation, Query, MutationResult,  MutationFn, QueryResult } from 'react-apollo'
+import { DataProxy } from 'apollo-cache';
 
 export const MutationFactory = (
   query: GraphQLRequest,
-  update?: () => void,
+  update?: (cache: DataProxy, data: FetchResult) => void,
   onError?: (error: ApolloError) => void
 ) => {
   return ({ render }: any) => (
@@ -31,25 +21,33 @@ export const MutationFactory = (
   )
 }
 
-// children={(result: QueryResult) => render({ result })}
+export interface QueryFactoryInterface {
+  query: GraphQLRequest;
+  variables?: { [key: string]: any };
+  pollInterval?: number;
+  fetchPolicy?: FetchPolicy;
+  onError?: (error: ApolloError) => void;
+  onCompleted?: (data: any) => void;
+}
+
 export const QueryFactory = ({
   query,
-  children,
   variables = {},
   pollInterval = 0,
   fetchPolicy = 'cache-first',
   onError,
-  onCompleted
+  onCompleted,
 }: QueryFactoryInterface) => {
-  return (
+  return ({ render }: any) => (
     <Query
       query={query}
       variables={variables}
-      children={() => children}
       pollInterval={pollInterval}
       fetchPolicy={fetchPolicy}
       onError={onError}
       onCompleted={onCompleted}
-    />
+    >
+      { (result: QueryResult) => render({ result }) }
+    </Query>
   )
 }
