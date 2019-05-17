@@ -18,6 +18,7 @@ enum cases {
   from_cache =  'from_cache'
 }
 
+// render the todos list from cb in apollo.client.query
 const RenderTodosFromState: React.FC = () => {
   return (
     <TodosContextConsumer>
@@ -41,12 +42,23 @@ const RenderTodosFromState: React.FC = () => {
   )
 }
 
+// render the todos list from render-props in query apollo comp
 const RenderTodosFromCache: React.FC = () => {
   return (
     <TodosContextConsumer>
-      { ({ todosQuery }) => {
-        return <span/>
-      }}
+      { ({ todosQuery: { loading, data }, updateTodo, deleteTodo, activeTodo }) => (
+        <>
+          { loading && <p>Loading…</p> }
+          { !loading && data.todos.map((todo: any) => (
+            <Todo
+              updateTodo={updateTodo}
+              deleteTodo={deleteTodo}
+              activeTodo={activeTodo}
+              todo={todo}
+            />
+          ))}
+        </>
+      )}
     </TodosContextConsumer>
   )
 }
@@ -79,7 +91,7 @@ const CreateTodo: React.FC = () => {
 }
 
 const App: React.FC = () => {
-  const activeCase = cases.from_state
+  const activeCase = cases.from_cache
 
   const renderComp = (type: cases) => {
     switch(type) {

@@ -12,7 +12,7 @@ export interface TodosContextInterface {
   getTodos: () => void;
   isLoading: boolean;
   activeTodo: string | undefined;
-  todosQuery: ApolloQueryResult | undefined;
+  todosQuery: ApolloQueryResult;
   setActiveTodo: (id: string) => void;
   createTodo: (title: string) => void;
   updateTodo: (id: string, completed: boolean) => void;

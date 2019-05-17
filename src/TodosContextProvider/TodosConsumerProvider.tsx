@@ -10,7 +10,7 @@ import { ApolloMutationResult, ApolloQueryResult } from '../interfaces/Apollo';
 
 interface adoptMapProvider {
   apolloClient: any;
-  todosQuery?: ApolloQueryResult;
+  todosQuery: ApolloQueryResult;
   createTodo: ApolloMutationResult;
   updateTodo: ApolloMutationResult;
   deleteTodo: ApolloMutationResult;
