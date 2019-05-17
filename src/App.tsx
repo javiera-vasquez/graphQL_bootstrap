@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import ApolloClient from "apollo-boost";
-import { ApolloProvider, QueryResult } from "react-apollo";
+import { ApolloProvider } from "react-apollo";
 
 import TodosContextProvider from './TodosContextProvider/TodosConsumerProvider'
-import { TodosContextConsumer, Todo } from './TodosContextProvider/TodosContext';
+import { TodosContextConsumer } from './TodosContextProvider/TodosContext';
+import Todo from './Todo';
 
 import './App.css';
 
 const client = new ApolloClient({
   uri: 'https://api.graph.cool/simple/v1/cjfitlb222zju01860wc988f6'
 });
+
+enum cases {
+  from_state = 'from_state',
+  from_cache =  'from_cache'
+}
 
 const RenderTodosFromState: React.FC = () => {
   return (
@@ -21,17 +27,13 @@ const RenderTodosFromState: React.FC = () => {
             {todos ?  'update todos' : 'get todos'}
           </button>
           { isLoading && <p>Loading…</p> }
-          { (todos && !isLoading) && todos.map(({id, title, completed}) => (
-            <div
-              key={id}
-              className={activeTodo === id ? 'active' : ''}
-              onClick={() => updateTodo(id, completed)}
-            >
-              <p>
-                {`${title} is completed ? ${completed}`}
-                <button onClick={() => deleteTodo(id)}>delete</button>
-              </p>
-            </div>
+          { (todos && !isLoading) && todos.map((todo) => (
+            <Todo
+              updateTodo={updateTodo}
+              deleteTodo={deleteTodo}
+              activeTodo={activeTodo}
+              todo={todo}
+            />
           ))}
         </>
       )}
@@ -40,37 +42,63 @@ const RenderTodosFromState: React.FC = () => {
 }
 
 const RenderTodosFromCache: React.FC = () => {
-  return <span />
+  return (
+    <TodosContextConsumer>
+      { ({ todosQuery }) => {
+        return <span/>
+      }}
+    </TodosContextConsumer>
+  )
 }
 
-// const CreateTodo: React.FC = () => {
-//   return (
-//     <TodosContextConsumer>
-//       {({ todos, activeTodo, updateTodo, deleteTodo }) => {
-//         return todos && todos.map(({id, title, completed}) => (
-//           <div
-//             key={id}
-//             className={activeTodo === id ? 'active' : ''}
-//             onClick={() => updateTodo(id, completed)}
-//           >
-//             {`${title} is completed ? ${completed}`}
-//             <button onClick={() => deleteTodo(id)}>
-//               delete
-//             </button>
-//           </div>
-//         ))
-//       }}
-//     </TodosContextConsumer>
-//   )
-// }
+const CreateTodo: React.FC = () => {
+  const [input, setInput] = useState<string>('');
+
+  return (
+    <TodosContextConsumer>
+      {({ createTodo }) => {
+        const handleAdd = (e: React.SyntheticEvent) => {
+          createTodo(input)
+          setInput('')
+          e.preventDefault()
+        }
+
+        return (
+          <form onSubmit={handleAdd}>
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+            />
+            <button type="submit">add</button>
+          </form>
+        )
+      }}
+    </TodosContextConsumer>
+  )
+}
 
 const App: React.FC = () => {
+  const activeCase = cases.from_state
+
+  const renderComp = (type: cases) => {
+    switch(type) {
+      case(cases.from_state) :
+        return <RenderTodosFromState />
+      case(cases.from_cache) :
+        return <RenderTodosFromCache />
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="App">
       <ApolloProvider client={client}>
         <TodosContextProvider>
           <h3>Todos</h3>
-          <RenderTodosFromState />
+          { renderComp(activeCase) }
+          <CreateTodo />
         </TodosContextProvider>
       </ApolloProvider>
     </div>
