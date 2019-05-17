@@ -50,6 +50,10 @@ export const TodosContextResolver = ({...props}) => {
           setMutationStatus(false)
         }
 
+        const getTodos = () => {
+          apolloClient.query({query: ALL_TODOS})
+        }
+
         return (
           <TodosContextProvider value={{
             getTodos: apolloClient.query({query: ALL_TODOS}),

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ApolloQueryResult, ApolloMutationResult } from '../interfaces/Apollo';
+import { ApolloMutationResult } from '../interfaces/Apollo';
+import { QueryResult } from 'react-apollo';
 
 export interface Todo {
   id: string;
@@ -8,7 +9,7 @@ export interface Todo {
 }
 
 export interface TodosContextInterface {
-  getTodos: ApolloQueryResult;
+  getTodos: () => void;
   isLoading: boolean;
   activeTodo: string | undefined;
   setActiveTodo: (id: string) => void;
