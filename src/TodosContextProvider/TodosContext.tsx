@@ -9,6 +9,7 @@ export interface Todo {
 }
 
 export interface TodosContextInterface {
+  todos: Todo[] | null;
   getTodos: () => void;
   isLoading: boolean;
   activeTodo: string | undefined;
