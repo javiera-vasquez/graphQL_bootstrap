@@ -10,7 +10,7 @@ import { ApolloMutationResult, ApolloQueryResult } from '../interfaces/Apollo';
 
 interface adoptMapProvider {
   apolloClient: any;
-  todos?: ApolloQueryResult;
+  todosQuery?: ApolloQueryResult;
   createTodo: ApolloMutationResult;
   updateTodo: ApolloMutationResult;
   deleteTodo: ApolloMutationResult;
@@ -21,7 +21,7 @@ const TodosContainer = adopt({
   createTodo: MutationFactory(CREATE_TODO, createTodoCache),
   updateTodo: MutationFactory(UPDATE_TODO, updateTodoCache),
   deleteTodo: MutationFactory(DELETE_TODO, deleteTodosCache),
-  // todos: QueryFactory({ query: ALL_TODOS })
+  todosQuery: QueryFactory({ query: ALL_TODOS })
 })
 
 export const TodosContextResolver = ({...props}) => {
@@ -31,7 +31,7 @@ export const TodosContextResolver = ({...props}) => {
 
   return (
     <TodosContainer>
-      {({ apolloClient, createTodo, updateTodo, deleteTodo }: adoptMapProvider) => {
+      {({ apolloClient, createTodo, updateTodo, deleteTodo, todosQuery }: adoptMapProvider) => {
 
         const handleComplete = async (id: string, completed: boolean) => {
           setMutationStatus(true)
@@ -67,6 +67,7 @@ export const TodosContextResolver = ({...props}) => {
             todos,
             getTodos,
             activeTodo,
+            todosQuery,
             isLoading: mutationStatus,
             setActiveTodo: (id: string) => setActiveTodo(id),
             createTodo: handleCreate,
